@@ -3,15 +3,18 @@
 venv
 __pycache__
 
-##
 # vscode
 .vscode
+
+# emaxs
+\#*#
 
 ##
 # for download xlsx/csv files
 downloads
 
 ##
-# output DIR
+# data directory
 data/
+
 
