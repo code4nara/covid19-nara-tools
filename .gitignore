@@ -6,15 +6,10 @@ __pycache__
 # vscode
 .vscode
 
-# emaxs
+# emacs
 \#*#
 
 ##
-# for download xlsx/csv files
-downloads
-
-##
 # data directory
-data/
-
-
+/data/*
+!/data/.gitkeep
