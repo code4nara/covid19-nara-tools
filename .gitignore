@@ -1,0 +1,17 @@
+##
+# Python and Python Virtual Env
+venv
+__pycache__
+
+##
+# vscode
+.vscode
+
+##
+# for download xlsx/csv files
+downloads
+
+##
+# output DIR
+data/
+
