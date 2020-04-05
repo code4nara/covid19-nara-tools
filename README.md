@@ -13,6 +13,15 @@ pip install -U pip
 pip install -r requirements.txt
 ```
 
+for CentOS8
+```
+sudo yum install python3
+sudo yum install python3-pip
+sudo pip3 install openpyxl
+sudo yum install epel-release
+sudo yum install jq
+```
+
 ## 使い方
 
 ### 奈良県版
@@ -21,7 +30,7 @@ pip install -r requirements.txt
 
 ### 奈良市版
 
-python convert_naracity.py | jq . > data_naracity.json
+python3 convert_naracity.py | jq . > data_naracity.json
 
 （注）jq で成型すること
 
