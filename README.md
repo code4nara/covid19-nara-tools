@@ -22,7 +22,14 @@ sudo yum install epel-release
 sudo yum install jq
 ```
 
+jq は出力を見やすく整形するときに利用
+
 ## 使い方
+
+### 奈良県内市町村jsonの作成
+
+python3 convert_municipalities.py > municipalities-data.json
+
 
 ### 奈良県版
 
@@ -30,13 +37,14 @@ sudo yum install jq
 
 ### 奈良市版
 
-python3 convert_naracity.py | jq . > data_naracity.json
-
-（注）jq で成型すること
+python3 convert_naracity.py  > data_naracity.json
 
 ## ファイル
 
 dataディレクトリにxlsxファイルを配置します。
 
+- 奈良県内市町村リンク： municipalities.xlsx
 - 奈良県全体要：準備中
 - 奈良市用： opendata_covid19_NaraCity.xlsx
+
+各excelのサンプルデータは samples 以下にある
