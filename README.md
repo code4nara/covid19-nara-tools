@@ -1,4 +1,4 @@
-# covid19-chiba-tools
+# covid19-nara-tools
 
 奈良県版 xlsx-json 変換ツール
 
@@ -47,4 +47,4 @@ dataディレクトリにxlsxファイルを配置します。
 - 奈良県全体要：準備中
 - 奈良市用： opendata_covid19_NaraCity.xlsx
 
-各excelのサンプルデータは samples 以下にある
+テスト実行は、sample以下にあるexcelのサンプルが使えます。
