@@ -36,6 +36,7 @@ data = {
     },
 
     "main_summary": {
+        "date": datetime.now().strftime('%Y/%m/%d %H:%M'),
         "attr": "検査実施人数",
         "value": 10,
         "children": [
