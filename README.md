@@ -28,9 +28,9 @@ jq は出力を見やすく整形するときに利用
 
 ### 奈良県内市町村jsonの作成
 
-python3 convert_municipalities.py -i \<excel file\> -o \<json file\>
-  excel file : default ./data/municipalities.xlsx
-  json file : default ./data/municipalities-data.json
+python3 convert_municipalities.py [-h] [-i excel file] [-o json file]<br>
+- excel file : default ./data/municipalities.xlsx<br>
+- json file : default ./data/municipalities-data.json
 
 ### 奈良県版
 
