@@ -10,8 +10,10 @@ sys.path.append(str(Path('__file__').resolve().parent))
 
 # Template, File, Directory
 TEMPLATE_JSON = './template/municipalities.json'
-SRC_FILE = './data/municipalities.xlsx'
-DEST_FILE = './data/municipalities-data.json'
+DATA_DIR = './data'
+SRC_FILE = 'municipalities_url_list.xlsx'
+DEST_FILE = 'municipalities-data.json'
+
 
 def main(args):
     data = pd.read_json(TEMPLATE_JSON)
@@ -30,8 +32,8 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     help_ = 'Input file'
-    parser.add_argument('-i', '--input', help=help_, default=SRC_FILE)
+    parser.add_argument('-i', '--input', help=help_, default=os.path.join(DATA_DIR, SRC_FILE))
     help_ = 'Output file'
-    parser.add_argument('-o', '--output', help=help_, default=DEST_FILE)
+    parser.add_argument('-o', '--output', help=help_, default=os.path.join(DATA_DIR, DEST_FILE))
     args = parser.parse_args()
     main(args)
