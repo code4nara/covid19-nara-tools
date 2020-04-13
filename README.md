@@ -26,10 +26,13 @@ jq は出力を見やすく整形するときに利用
 
 ## 使い方
 
-### 奈良県ニュースjsonの作成
-# http://www.pref.nara.jpから取得
-python3 scraping_nara.py [-h] [-o json file]<br>
-- json file : default ./data/news.json
+### 奈良県/奈良市のニュースjsonの作成
+# 奈良県：http://www.pref.nara.jpから取得
+# 奈良市：https://www.city.nara.lg.jp
+
+python3 scraping_naraNews.py [-h] [-pref json file] [-city json file]<br>
+- pref json file : default ./data/news.json
+- city json file : default ./data/news_naracity.json
 
 ### 奈良県内市町村jsonの作成
 
