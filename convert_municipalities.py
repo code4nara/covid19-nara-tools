@@ -11,7 +11,7 @@ sys.path.append(str(Path('__file__').resolve().parent))
 # Template, File, Directory
 TEMPLATE_JSON = './template/municipalities.json'
 DATA_DIR = './data'
-SRC_FILE = 'municipalities_url_list.xlsx'
+SRC_FILE = 'municipalities.xlsx'
 DEST_FILE = 'municipalities-data.json'
 
 
