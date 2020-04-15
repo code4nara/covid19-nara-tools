@@ -47,7 +47,7 @@ def parse_nara_patients_list():
         # 陽性患者属性
         patients_data = {
             "No": patient_no, 
-            "日付": pub_date.isoformat(timespec='milliseconds')+'Z',
+            "発表日": pub_date.isoformat(timespec='milliseconds')+'Z',
             "居住地": where_lived,
             "年代": age,
             "性別": sex,
