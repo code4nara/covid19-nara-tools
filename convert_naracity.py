@@ -6,6 +6,7 @@ import glob
 from datetime import datetime, date, time, timedelta
 import json
 from common import excel_date
+from pathlib import Path
 
 from processing.patients import parse_nara_patients_list
 from processing.dailystatus import parse_nara_dailystatus
@@ -35,6 +36,7 @@ data = {
     },
 
     "main_summary": {
+        "date": datetime.now().strftime('%Y/%m/%d %H:%M'),
         "attr": "検査実施人数",
         "value": 10,
         "children": [
@@ -86,7 +88,8 @@ data = {
     "lastUpdate": datetime.now().strftime('%Y/%m/%d %H:%M'),
 }
 
-print(json.dumps(data))
+print(json.dumps(data, ensure_ascii=False ) )
+
     
 """
     },
