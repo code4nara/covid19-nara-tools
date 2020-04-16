@@ -28,7 +28,7 @@ ls -la ${DEXCEL_naracitySaved}
 
 diff ${DEXCEL_naracity}  ${DEXCEL_naracitySaved} > /dev/null 2>&1
 
-if [ $? -eq 1 ] ; then
+if [ $? -ne 0 ] ; then
     echo "Found updete : ${DURL_naracity}"
     # JSON に変換
     cp ${DEXCEL_naracity} ${DEXCEL_naracitySaved}
