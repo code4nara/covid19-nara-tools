@@ -45,7 +45,7 @@ def parse_nara_dailystatus():
             inspection_positive =0
             
         # 陽性患者数
-        if inspection_count != None :
+        if inspection_positive != None :
             patients_data = {
                 "日付": search_date.isoformat(timespec='milliseconds')+'Z',
                 "小計": inspection_positive,
