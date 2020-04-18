@@ -5,7 +5,7 @@
 ####
 
 # コピー先のディレクトリとファイル名
-TGT_JSON_DIR="../covid19/data/"
+TGT_JSON_DIR="../html/api/"
 
 # 奈良県のニュース
 TJSON_newspref="news.json"  
