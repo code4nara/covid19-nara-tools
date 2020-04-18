@@ -55,16 +55,15 @@ if [ $? -ne 0 ] ; then
 fi
 
 
-# 奈良市版コード変更は未対応の為
-exit
+# 奈良市版はまだ正式発表でないため
+
+if 0 ; then 
 
 #### 奈良市版のデータコンバート
 # エクセルファイルをダウンロードし保存ファイルと比較
 curl -s -L ${DURL_naracity} -o ${DEXCEL_naracity}
 
 diff ${DEXCEL_naracity}  ${DEXCEL_naracitySaved} > /dev/null 2>&1
-
-# echo "Convert Naracity Data"
 if [ $? -ne 0 ] ; then
     echo "Found updete : ${DURL_naracity}"
     # コピーを保存
@@ -77,3 +76,10 @@ if [ $? -ne 0 ] ; then
     cp ${TEMP_naracity} ${TGT_JSON_DIR}${TJSON_naracity}
 fi
 
+fi
+
+# 開発サイトへのデプロイ：要環境変数 GITHUB_TOKEN
+./deploy_development.sh
+
+# 本番サイトへのデプロイ：要環境変数 GITHUB_TOKEN
+#./deploy_master.sh
