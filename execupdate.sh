@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -l
 ####n
 #   Stop Covid19nara
 #   The Script to make JSON
