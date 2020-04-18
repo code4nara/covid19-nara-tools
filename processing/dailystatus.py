@@ -9,7 +9,7 @@ from pathlib import Path
 sys.path.append(str(Path('__file__').resolve().parent))
 from common import excel_date
 
-FILENAME = "opendata_covid19_NaraCity.xlsx"
+FILENAME = "opendata_covid19_naracity.xlsx"
 
 def parse_nara_dailystatus():
     paths = [os.path.abspath(os.path.dirname(__file__)), '..', 'data', FILENAME]
@@ -32,10 +32,13 @@ def parse_nara_dailystatus():
         inspection_count= row[5] # 調査実施_件数
         inspection_positive = row[6] # 陽性確認_件数
         inspection_negative = row[7] # 陰性確認_件数
-        stayed_count     = row[8] # 入院者数_現在
-        discharged_count = row[9] # 退院者数_累計
-        death_count      = row[10] # 亡くなられた方
-        querents_count   = row[11] # 相談件数
+        stayed_total     = row[8] # 入院者数_累計
+        stayed_count     = row[9] # 入院者数_現在
+        stayed_wp_count  = row[10] # 有症状
+        stayed_wo_count  = row[11] # 無症状
+        discharged_count = row[12] # 退院者数_累計
+        death_count      = row[13] # 亡くなられた方
+        querents_count   = row[14] # 相談件数
         
         # 陽性確認件数が空欄の場合は0として扱う
         if inspection_positive == None :
