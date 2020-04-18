@@ -16,7 +16,10 @@ from processing.dailystatus import parse_nara_dailystatus
 
 #(inspections, inspections_summary_data, inspections_summary_labels), total_count = parse_inspection_per_date()
 patients_list, patients_count, stayed_count, discharge_count, death_count = parse_nara_patients_list()
-patients_summary, inspections_list, querents_list = parse_nara_dailystatus()
+patients_summary, inspections_list, querents_list, inspections_total, stayed_count, discharge_count, death_count = parse_nara_dailystatus()
+
+#死亡者を除く
+discharge_count-=death_count
 
 #sorted_values = sorted(patients_and_no_symptoms_summary_data.values(), key=lambda d: d["day"])
 #patients_and_no_symptoms_summary_data_patients = []
@@ -38,7 +41,7 @@ data = {
     "main_summary": {
         "date": datetime.now().strftime('%Y/%m/%d %H:%M'),
         "attr": "検査実施人数",
-        "value": 10,
+        "value": inspections_total,
         "children": [
             {
                 "attr": "陽性患者数",
@@ -50,11 +53,11 @@ data = {
                         "children": [
                             {
                                 "attr": "軽症・中等症",
-                                "value": 2
+                                "value": "-"
                             },
                             {
                                 "attr": "重症",
-                                "value": 1
+                                "value": "-"
                             }
                         ]
                     },

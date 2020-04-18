@@ -8,6 +8,7 @@ import collections as cl
 import json
 import codecs
 import argparse
+import re
 
 import sys
 from pathlib import Path
@@ -25,18 +26,15 @@ NARA_CITY_BASE_URL = 'https://www.city.nara.lg.jp'
 
 # 奈良県のトップページのパース
 def parse_pref_page(page):
-    items = []
-    for i in range(0, 9):
-        item = page.select('#H7_1356_BlogList_ctl0{}_TitleLink'.format(i+1))
-        if len(item) > 0:
-            items.append(item)
+    headerPane = page.find(name='div', attrs={'class': 'inside_b Menu_list'})
+    items = headerPane.select('a[id*="TitleLink"]')
     return items
 
 # 奈良県のニュースのパース
 def parse_pref_item(item):
     # 令和 → 西暦
     sep_keys = ['令和', '年', '月', '日）']
-    str = item[0].string
+    str = item.string
     for key in sep_keys:
         str = str.replace(key, ',')
     elem = str.split(',')
@@ -44,7 +42,7 @@ def parse_pref_item(item):
     # タイトル 
     text = elem[4]
     # 相対 → 絶対
-    str = item[0].attrs['href']
+    str = item.attrs['href']
     str = str.replace('#module', ',')
     elem = str.split(',')
     url = NARA_PREF_BASE_URL + elem[0]
@@ -54,6 +52,7 @@ def parse_pref_item(item):
 # 奈良県のjsonファイル作成
 def make_pref_json(items, filename):
     list = []
+    print(len(items))
     for i, item in enumerate(items):
         date, url, text = parse_pref_item(item)
         elem = cl.OrderedDict({"date": date, "url": url, "text": text})
