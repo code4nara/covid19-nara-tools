@@ -66,6 +66,6 @@ def parse_nara_patients_list():
             death_count += 1 # 死亡数
         #print(patients_data)
 
-    return patients_list, patients_count, stayed_count, discharge_count, death_count
+    return last_update, patients_list, patients_count, stayed_count, discharge_count, death_count
 
 #   return patients_count, discharge_count, stayed_count, tiny_injury_count, severe_injury_count, data, patients_list

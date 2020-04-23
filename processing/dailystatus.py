@@ -70,8 +70,9 @@ def parse_nara_dailystatus():
                 "小計": querents_count,
             }
             querents_list.append(querents_data)
+        
 
-    return patients_summary, inspections_list, querents_list, inspections_total, stayed_count, discharged_count, death_count
+    return search_date, patients_summary, inspections_list, querents_list, inspections_total, stayed_count, discharged_count, death_count
 
 if __name__ == '__main__':
     patients_summary, inspections_list, querents_list = parse_nara_dailystatus()
