@@ -15,31 +15,24 @@ from processing.dailystatus import parse_nara_dailystatus
 #from processing.querents import parse_querents
 
 #(inspections, inspections_summary_data, inspections_summary_labels), total_count = parse_inspection_per_date()
-patients_list, patients_count, stayed_count, discharge_count, death_count = parse_nara_patients_list()
-patients_summary, inspections_list, querents_list, inspections_total, stayed_count, discharge_count, death_count = parse_nara_dailystatus()
+patients_ldate, patients_list, patients_count, stayed_count, discharge_count, death_count = parse_nara_patients_list()
+patients_date, patients_summary, inspections_date, inspections_list, querents_date, querents_list, inspections_total, stayed_count, discharge_count, death_count = parse_nara_dailystatus()
 
 #死亡者を除く
 discharge_count-=death_count
 
-#sorted_values = sorted(patients_and_no_symptoms_summary_data.values(), key=lambda d: d["day"])
-#patients_and_no_symptoms_summary_data_patients = []
-#patients_and_no_symptoms_summary_data_no_symptoms = []
-#patients_and_no_symptoms_summary_labels = []
-#for d in sorted_values:
-#    patients_and_no_symptoms_summary_data_patients.append(d["patients"])
-#    patients_and_no_symptoms_summary_data_no_symptoms.append(d["no_symptoms"])
-#    patients_and_no_symptoms_summary_labels.append(d["labels"])
+# print( patients_date )
 
 # data.json 雛形
 data = {
     # 陽性患者
     "patients": {
-        "date": datetime.now().strftime('%Y/%m/%d %H:%M'),
+        "date": patients_ldate,
         "data": patients_list
     },
 
     "main_summary": {
-        "date": datetime.now().strftime('%Y/%m/%d %H:%M'),
+        "date": patients_date,
         "attr": "検査実施人数",
         "value": inspections_total,
         "children": [
@@ -75,17 +68,17 @@ data = {
     },
     # 患者数
     "patients_summary": { 
-        "date": datetime.now().strftime('%Y/%m/%d %H:%M'),
+        "date": patients_date,
         "data": patients_summary
     },
     # 検査実施数
     "inspections_summary": {
-        "date": datetime.now().strftime('%Y/%m/%d %H:%M'),
+        "date": inspections_date,
         "data": inspections_list
     },
     # 相談件数
     "querents": { 
-        "date": datetime.now().strftime('%Y/%m/%d %H:%M'),
+        "date": querents_date,
         "data": querents_list
     },
     "lastUpdate": datetime.now().strftime('%Y/%m/%d %H:%M'),

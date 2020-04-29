@@ -16,7 +16,6 @@ def parse_nara_dailystatus():
     f = os.path.join(*paths)
     wb = load_workbook(f)
     ws = wb['2.感染症状況']
-    patients_total= 0
     patients_summary = []   # 陽性患者数
     inspections_total= 0
     inspections_list = []   # 検査数
@@ -43,9 +42,10 @@ def parse_nara_dailystatus():
         # 陽性確認件数が空欄の場合は0として扱う
         if inspection_positive == None :
             inspection_positive =0
-            
+
         # 陽性患者数
         if inspection_positive != None :
+            patients_date = search_date.strftime('%Y/%m/%d')
             patients_data = {
                 "日付": search_date.isoformat(timespec='milliseconds')+'Z',
                 "小計": inspection_positive,
@@ -55,6 +55,7 @@ def parse_nara_dailystatus():
         # ＰＣＲ検査数
         if inspection_count != None :
             inspections_total += inspection_count
+            inspections_date = search_date.strftime('%Y/%m/%d')
             inspections_data = {
                 "日付": search_date.isoformat(timespec='milliseconds')+'Z',
                 "小計": inspection_count,
@@ -65,13 +66,14 @@ def parse_nara_dailystatus():
 
         # 相談者数
         if querents_count != None :
+            querents_date = search_date.strftime('%Y/%m/%d')
             querents_data = {
                 "日付": search_date.isoformat(timespec='milliseconds')+'Z',
                 "小計": querents_count,
             }
             querents_list.append(querents_data)
 
-    return patients_summary, inspections_list, querents_list, inspections_total, stayed_count, discharged_count, death_count
+    return patients_date, patients_summary, inspections_date, inspections_list, querents_date, querents_list, inspections_total, stayed_count, discharged_count, death_count
 
 if __name__ == '__main__':
     patients_summary, inspections_list, querents_list = parse_nara_dailystatus()
