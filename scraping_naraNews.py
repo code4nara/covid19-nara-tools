@@ -45,7 +45,10 @@ def parse_pref_item(item):
     str = item.attrs['href']
     str = str.replace('#module', ',')
     elem = str.split(',')
-    url = NARA_PREF_BASE_URL + elem[0]
+    if elem[0].startswith('http'):
+        url = elem[0]
+    else:
+        url = NARA_PREF_BASE_URL + elem[0]
     print(date, url, text)
     return date, url, text
 
@@ -81,7 +84,9 @@ def parse_city_item(date, title):
     # タイトル 
     text = title.find('a').string
     # 相対 → 絶対
-    url = NARA_CITY_BASE_URL + title.find('a').get('href')
+    url = title.find('a').get('href')
+    if not url.startswith('http'):
+        url = NARA_CITY_BASE_URL + title.find('a').get('href')
     print(date, url, text)
     return date, url, text
 
