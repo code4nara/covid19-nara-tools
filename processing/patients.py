@@ -56,6 +56,7 @@ def parse_nara_patients_list():
             "備考": note,
         }
         patients_list.append(patients_data)
+        patients_ldate = pub_date.strftime('%Y/%m/%d')
 
         patients_count += 1 # 陽性患者数
         if discharge == 0 : 
@@ -66,6 +67,6 @@ def parse_nara_patients_list():
             death_count += 1 # 死亡数
         #print(patients_data)
 
-    return last_update, patients_list, patients_count, stayed_count, discharge_count, death_count
+    return patients_ldate, patients_list, patients_count, stayed_count, discharge_count, death_count
 
 #   return patients_count, discharge_count, stayed_count, tiny_injury_count, severe_injury_count, data, patients_list

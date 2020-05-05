@@ -15,38 +15,24 @@ from processing.dailystatus import parse_nara_dailystatus
 #from processing.querents import parse_querents
 
 #(inspections, inspections_summary_data, inspections_summary_labels), total_count = parse_inspection_per_date()
-list_update, patients_list, patients_count, stayed_count, discharge_count, death_count = parse_nara_patients_list()
-daily_update, patients_summary, inspections_list, querents_list, inspections_total, stayed_count, discharge_count, death_count = parse_nara_dailystatus()
+patients_ldate, patients_list, patients_count, stayed_count, discharge_count, death_count = parse_nara_patients_list()
+patients_date, patients_summary, inspections_date, inspections_list, querents_date, querents_list, inspections_total, stayed_count, discharge_count, death_count = parse_nara_dailystatus()
 
 #死亡者を除く
 discharge_count-=death_count
 
-#sorted_values = sorted(patients_and_no_symptoms_summary_data.values(), key=lambda d: d["day"])
-#patients_and_no_symptoms_summary_data_patients = []
-#patients_and_no_symptoms_summary_data_no_symptoms = []
-#patients_and_no_symptoms_summary_labels = []
-#for d in sorted_values:
-#    patients_and_no_symptoms_summary_data_patients.append(d["patients"])
-#    patients_and_no_symptoms_summary_data_no_symptoms.append(d["no_symptoms"])
-#    patients_and_no_symptoms_summary_labels.append(d["labels"])
-
-strupdate = datetime.now().strftime('%Y/%m/%d %H:%M')
-list_update+= timedelta(hours=18)
-daily_update+= timedelta(hours=18) # 日付しかないのでその日の18時に修正
-listdate  = list_update.strftime('%Y/%m/%d %H:%M') 
-dailydate = daily_update.strftime('%Y/%m/%d %H:%M') 
+# print( patients_date )
 
 # data.json 雛形
 data = {
     # 陽性患者
     "patients": {
-        "date": listdate,
-        #"date": datetime.now().strftime('%Y/%m/%d %H:%M'),
+        "date": patients_ldate,
         "data": patients_list
     },
 
     "main_summary": {
-        "date": dailydate,
+        "date": patients_date,
         "attr": "検査実施人数",
         "value": inspections_total,
         "children": [
@@ -82,20 +68,20 @@ data = {
     },
     # 患者数
     "patients_summary": { 
-        "date": dailydate,
+        "date": patients_date,
         "data": patients_summary
     },
     # 検査実施数
     "inspections_summary": {
-        "date": dailydate,
+        "date": inspections_date,
         "data": inspections_list
     },
     # 相談件数
     "querents": { 
-        "date": dailydate,
+        "date": querents_date,
         "data": querents_list
     },
-    "lastUpdate": strupdate
+    "lastUpdate": datetime.now().strftime('%Y/%m/%d %H:%M')
 }
 
 print(json.dumps(data, ensure_ascii=False ) )
