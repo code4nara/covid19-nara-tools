@@ -79,7 +79,7 @@ fi
 fi
 
 # 開発サイトへのデプロイ：要環境変数 GITHUB_TOKEN
-./deploy_development.sh
+#./deploy_development.sh
 
 # 本番サイトへのデプロイ：要環境変数 GITHUB_TOKEN
 #./deploy_master.sh
