@@ -12,12 +12,12 @@ sys.path.append(str(Path('__file__').resolve().parent))
 # Template, File, Directory
 DATA_DIR = './data'
 
-SRC_SHEETID = "1C07ojkwER8BiAjLBxlzJkfvgM5jxUCLrdtI7wtctTIY"
+SRC_SHEETID = "1qR8Xs1oZXS0Qt7nGkWtpTu1wNQtngdxUVo6pBl_QP-U"
 SHEET1_NAME = '01.陽性患者の属性'
 #SHEET2_NAME = '入院患者の状況'
 SHEET2_NAME = '03.陽性者状況'
 
-DEST1_FILE = 'data.json'
+DEST1_FILE = 'data_naracity.json'
 DEST2_FILE = 'sickbeds_summary.json'
 
 TAB = ['', '  ', '    ', '      ', '        ', '          ', '            ',
@@ -30,7 +30,7 @@ def load_patient_list( dataUri, sheetName ):
     
     # 必要なデータのみに加工
     df_list.columns = df_list.iloc[0]
-    df_list = df_list.drop(range(0,2))
+    df_list = df_list.drop(range(0,1))
     df_list = df_list.drop(['全国地方公共団体コード', '都道府県名', '患者_渡航歴の有無フラグ','患者_退院済フラグ'], axis=1)
     # NaNの置換
     df_list['備考'] = df_list['備考'].fillna('')
@@ -55,20 +55,26 @@ def load_patient_summary( dataUri, sheetName ):
     df_summary = pd.read_excel( dataUri, sheet_name=sheetName, header=None)
 
     # 必要なデータのみに加工
-    df_summary.columns = df_summary.iloc[1]
-    df_summary = df_summary.drop(range(0,2))
+    df_summary.columns = df_summary.iloc[0]
+    df_summary = df_summary.drop(range(0,1))
     
-    df_summary['発表日'] = df_summary['発表日'].fillna('')
-    df_summary = df_summary[df_summary['発表日'] != '' ]
+    df_summary['調査_年月日'] = df_summary['調査_年月日'].fillna('')
+    df_summary = df_summary[df_summary['調査_年月日'] != '' ]
 
     # 最終更新日時設定
     last_data = df_summary.iloc[len(df_summary.index)-1]
-    last_update = last_data['発表日']
+    last_update = last_data['調査_年月日']
 
     # NaNの置換
-    df_summary['重症'] = df_summary['重症'].fillna( 0 )
-    df_summary['宿泊療養'] = df_summary['宿泊療養'].fillna( 0 )
-    df_summary['自宅療養'] = df_summary['自宅療養'].fillna( 0 )
+    df_summary['感染者数_累計'] = df_summary['感染者数_累計'].fillna( -1 )
+    df_summary['感染者数_現在'] = df_summary['感染者数_現在'].fillna( -1 )
+    df_summary['入院者数_現在'] = df_summary['入院者数_現在'].fillna( -1 )
+    df_summary['重症者数_現在'] = df_summary['重症者数_現在'].fillna( -1 )
+    df_summary['重症者数_現在'] = df_summary['重症者数_現在'].fillna( -1 )
+    df_summary['宿泊療養_現在'] = df_summary['宿泊療養_現在'].fillna( -1 )
+    df_summary['自宅療養_現在'] = df_summary['自宅療養_現在'].fillna( -1 )
+    df_summary['退院者数_累計'] = df_summary['退院者数_累計'].fillna( -1 )
+    df_summary['死亡者数_累計'] = df_summary['死亡者数_累計'].fillna( -1 )
     #print(df_summary)
 
     # 日付 : object型→datetime型
@@ -159,7 +165,7 @@ def output_patients_summary(f, last_update, summary):
     f.write(TAB[1] + '},\n')
 
 # 現在（最新）の陽性者状況の出力
-def output_main_summary(f, last_update, summary):
+def output_main_summary(f, last_update, summary, patient_total ):
     last_data = summary.iloc[len(summary.index)-1]
     f.write(TAB[1] + '"main_summary":{\n')
     #f.write(TAB[2] + '"date": "{}",\n'.format(last_update.strftime('%Y/%m/%d %H:%M')))
@@ -169,39 +175,39 @@ def output_main_summary(f, last_update, summary):
     f.write(TAB[2] + '"children": [\n')
     f.write(TAB[3] + '{\n')
     f.write(TAB[4] + '"attr": "感染者数累計",\n')
-    f.write(TAB[4] + '"value": {},\n'.format(last_data['感染者数累計']))
+    f.write(TAB[4] + '"value": {},\n'.format( patient_total))
     f.write(TAB[4] + '"children": [\n')
     f.write(TAB[5] + '{\n')
     f.write(TAB[6] + '"attr": "現在感染者数",\n')
-    f.write(TAB[6] + '"value": {},\n'.format(last_data['現在感染者数']))
+    f.write(TAB[6] + '"value": {},\n'.format(last_data['感染者数_現在']))
     f.write(TAB[6] + '"children": [\n')
     f.write(TAB[7] + '{\n')
     f.write(TAB[8] + '"attr": "入院中",\n')
-    f.write(TAB[8] + '"value": {},\n'.format(last_data['入院中']))
+    f.write(TAB[8] + '"value": {},\n'.format(last_data['入院者数_現在']))
     f.write(TAB[8] + '"children": [\n')
     f.write(TAB[9] + '{\n')
     f.write(TAB[10] + '"attr": "重症",\n')
-    f.write(TAB[10] + '"value": {}\n'.format(last_data['重症']))
+    f.write(TAB[10] + '"value": {}\n'.format(last_data['重症者数_現在']))
     f.write(TAB[9] + '}\n')
     f.write(TAB[8] + ']\n')
     f.write(TAB[7] + '},\n')
     f.write(TAB[7] + '{\n')
     f.write(TAB[8] + '"attr": "宿泊療養",\n')
-    f.write(TAB[8] + '"value": {}\n'.format(last_data['宿泊療養']))
+    f.write(TAB[8] + '"value": {}\n'.format(last_data['宿泊療養_現在']))
     f.write(TAB[7] + '},\n')
     f.write(TAB[7] + '{\n')
     f.write(TAB[8] + '"attr": "自宅療養",\n')
-    f.write(TAB[8] + '"value": {}\n'.format(last_data['自宅療養']))
+    f.write(TAB[8] + '"value": {}\n'.format(last_data['自宅療養_現在']))
     f.write(TAB[7] + '}\n')
     f.write(TAB[6] + ']\n')
     f.write(TAB[5] + '},\n')
     f.write(TAB[5] + '{\n')
     f.write(TAB[6] + '"attr": "退院等累計",\n')
-    f.write(TAB[6] + '"value": {}\n'.format(last_data['退院等累計']))
+    f.write(TAB[6] + '"value": {}\n'.format(last_data['退院者数_累計']))
     f.write(TAB[5] + '},\n')
     f.write(TAB[5] + '{\n')
     f.write(TAB[6] + '"attr": "死亡",\n')
-    f.write(TAB[6] + '"value": {}\n'.format(last_data['死亡']))
+    f.write(TAB[6] + '"value": {}\n'.format(last_data['死亡者数_累計']))
     f.write(TAB[5] + '}\n')
     f.write(TAB[4] + ']\n')
     f.write(TAB[3] + '}\n')
@@ -231,8 +237,8 @@ def output_data_json(fname, list_last_update, df_list, summary_last_update, df_s
     output_patients_list(fileobj, list_last_update, df_list)
     output_patientslist_summary(fileobj, summary_last_update, df_list)
     #output_patients_summary(fileobj, summary_last_update, df_summary)
-    output_main_summary(fileobj, summary_last_update, df_summary)
-    output_sickbeds_summary(fileobj, summary_last_update, df_summary)
+    output_main_summary(fileobj, summary_last_update, df_summary, len(df_list) )
+    #output_sickbeds_summary(fileobj, summary_last_update, df_summary)
 
     fileobj.write(TAB[1] + '"lastUpdate": "{}"\n'.format( datetime.datetime.now().strftime('%Y/%m/%d %H:%M')))
 
@@ -258,14 +264,14 @@ def main(args):
     # patient_list
     datauri = "https://docs.google.com/spreadsheets/d/{0}/export?format=xlsx&id={0}".format( args.gid  )
     list_last_update, df_list = load_patient_list( datauri, args.list )
-    print(list_last_update, len(df_list.index))
+    print("  ",list_last_update, len(df_list.index))
     #print( df_list.head())
     #print( df_list )
     
     # summary
     datauri = "https://docs.google.com/spreadsheets/d/{0}/export?format=xlsx&id={0}".format( args.gid )
     summary_last_update, df_summary = load_patient_summary( datauri, args.summary )
-    print(summary_last_update, len(df_summary.index))
+    print("  ",summary_last_update, len(df_summary.index))
     #print(df_summary.head())
 
     # output data.json
@@ -273,7 +279,7 @@ def main(args):
     # output_sickbeds_json(args.beds, summary_last_update, df_summary)
     
 if __name__ == '__main__':
-    print( "Nara PREFCTURE  Data Convert Srcipt." )
+    print( "Nara CITY  Data Convert Srcipt." )
     parser = argparse.ArgumentParser()
     help_ = 'Google Spreadsheet Id'
     parser.add_argument('-i', '--gid', help=help_, default=SRC_SHEETID )
@@ -284,6 +290,10 @@ if __name__ == '__main__':
     help_ = 'Data file'
     parser.add_argument('-d', '--data', help=help_, default=os.path.join(DATA_DIR, DEST1_FILE))
     args = parser.parse_args()
+
+    print( "  output JSON: %s."%( args.data ) )
     main( args )
     print( "Finished." )
+
+
 
