@@ -19,7 +19,7 @@ TEMP_newspref="./data/news.json"
 TEMP_newsprefSaved=${TEMP_newspref}"_saved"
 
 # 奈良市の感染データ
-#TJSON_datacity="data_naracity.json"  
+#TJSON_datacity="data_naracity.json"     # WIP needs update
 TJSON_datacity="naracity.json"  
 TEMP_datacity="./data/data_naracity.json"
 TEMP_datacitySaved=${TEMP_datacity}"_saved"
@@ -44,13 +44,12 @@ function CheckDiff()
 	grep -v lastaUpdate $1 > ${TEMPFILE1}
 	grep -v lastaUpdate $2 > ${TEMPFILE2}
 	diff ${TEMPFILE1} ${TEMPFILE2} > /dev/null 2>&1
-	rm $TEMPFILE1
-	rm $TEMPFILE2
-    
 	if [ $? -ne 0 ] ; then
 	    echo 1
+	else
+	    echo 0
 	fi
-	echo 0
+	rm -f $TEMPFILE1 $TEMPFILE2
     fi
 }
 
@@ -118,10 +117,12 @@ eval ${cmd}
 ret=`CheckDiff ${TEMP_datacity}  ${TEMP_datacitySaved}`
 if [ $ret == "1" ] ; then
     echo "II  Found updete : Nara City Data"
-    UPDATE_FLAG=1
-    # コピーを保存し公開フォルダにコピー
-    cp ${TEMP_datacity} ${TEMP_datacitySaved}
-    cp ${TEMP_datacity} ${TGT_JSON_DIR}${TJSON_datacity}
+
+    # WIP needs update
+    #    UPDATE_FLAG=1
+    #    # コピーを保存し公開フォルダにコピー
+    #    cp ${TEMP_datacity} ${TEMP_datacitySaved}
+    #    cp ${TEMP_datacity} ${TGT_JSON_DIR}${TJSON_datacity}
 fi
 
 
