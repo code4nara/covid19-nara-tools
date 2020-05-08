@@ -19,8 +19,7 @@ TEMP_newspref="./data/news.json"
 TEMP_newsprefSaved=${TEMP_newspref}"_saved"
 
 # 奈良市の感染データ
-#TJSON_datacity="data_naracity.json"     # WIP needs update
-TJSON_datacity="naracity.json"  
+TJSON_datacity="data_naracity.json" 
 TEMP_datacity="./data/data_naracity.json"
 TEMP_datacitySaved=${TEMP_datacity}"_saved"
 # 奈良市のニュース
@@ -41,8 +40,8 @@ function CheckDiff()
     elif [ ! -e $2 ]; then
 	echo 1;
     else
-	grep -v lastaUpdate $1 > ${TEMPFILE1}
-	grep -v lastaUpdate $2 > ${TEMPFILE2}
+	grep -v lastUpdate $1 > ${TEMPFILE1}
+	grep -v lastUpdate $2 > ${TEMPFILE2}
 	diff ${TEMPFILE1} ${TEMPFILE2} > /dev/null 2>&1
 	if [ $? -ne 0 ] ; then
 	    echo 1
@@ -69,7 +68,7 @@ eval ${cmd}
 # 保存データと比較し変更があれば公開場所にコピー
 ret=`CheckDiff ${TEMP_newspref} ${TEMP_newsprefSaved}`
 if [ $ret == "1" ] ; then
-    echo "II  Found updete : News in Prefecture"
+    echo "II  ${TJSON_newspref} Found updete : News in Prefecture"
     UPDATE_FLAG=1
     # コピーを保存し公開フォルダにコピー
     cp ${TEMP_newspref} ${TEMP_newsprefSaved}
@@ -79,7 +78,7 @@ fi
 # 保存データと比較し変更があれば公開場所にコピー
 ret=`CheckDiff ${TEMP_newscity}  ${TEMP_newscitySaved}`
 if [ $ret == "1" ] ; then
-    echo "II  Found updete : News in City"
+    echo "II  ${TJSON_newscity} Found updete : News in City"
     UPDATE_FLAG=1
     # コピーを保存し公開フォルダにコピー
     cp ${TEMP_newscity} ${TEMP_newscitySaved}
@@ -90,14 +89,14 @@ fi
 # 奈良県感染データ更新：グーグルスプレッドシート参照
 ####
 echo "--  Making data,json from GoogleSpreadSheet"
-cmd="python3 ./convert_narapregfV2.py > /dev/null 2>&1" 
+cmd="python3 ./convert_naraprefV2.py > /dev/null 2>&1" 
 echo "    cmd: " ${cmd}
 eval ${cmd}
 
 # 保存データと比較し変更があれば公開場所にコピー
 ret=`CheckDiff ${TEMP_datapref}  ${TEMP_dataprefSaved}`
 if [ $ret == "1" ] ; then
-    echo "II  Found updete : Prefecture Data"
+    echo "II  ${TJSON_datapref} Found updete : Prefecture Data"
     UPDATE_FLAG=1
     # コピーを保存し公開フォルダにコピー
     cp ${TEMP_datapref} ${TEMP_dataprefSaved}
@@ -116,13 +115,11 @@ eval ${cmd}
 # 保存データと比較し変更があれば公開場所にコピー
 ret=`CheckDiff ${TEMP_datacity}  ${TEMP_datacitySaved}`
 if [ $ret == "1" ] ; then
-    echo "II  Found updete : Nara City Data"
-
-    # WIP needs update
-    #    UPDATE_FLAG=1
-    #    # コピーを保存し公開フォルダにコピー
-    #    cp ${TEMP_datacity} ${TEMP_datacitySaved}
-    #    cp ${TEMP_datacity} ${TGT_JSON_DIR}${TJSON_datacity}
+    echo "II  ${TJSON_datacity} Found updete : Nara City Data"
+    UPDATE_FLAG=1
+    # コピーを保存し公開フォルダにコピー
+    cp ${TEMP_datacity} ${TEMP_datacitySaved}
+    cp ${TEMP_datacity} ${TGT_JSON_DIR}${TJSON_datacity}
 fi
 
 
@@ -134,7 +131,7 @@ if [ ${UPDATE_FLAG} == 1 ]; then
    # 開発サイトへのデプロイ：要環境変数 GITHUB_TOKEN
    cmd="bash ./githubDeployment.sh -b" 
    echo "    cmd: " ${cmd}
-   #eval ${cmd}
+   eval ${cmd}
 
    # 本番サイトへのデプロイ：要環境変数 GITHUB_TOKEN
    cmd="bash ./githubDeployment.sh -b -r master -e production" 
