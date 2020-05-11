@@ -11,7 +11,8 @@ TGT_JSON_DIR="../html/api/"
 
 # 奈良県の感染データ
 TJSON_datapref="data.json"  
-TEMP_datapref="./data/data.json"
+#TEMP_datapref="./data/data.json"
+TEMP_datapref="./data/V3data.json"
 TEMP_dataprefSaved=${TEMP_datapref}"_saved"
 # 奈良県のニュース
 TJSON_newspref="news.json"  
