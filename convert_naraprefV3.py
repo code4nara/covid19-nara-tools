@@ -29,7 +29,7 @@ SHEET1_NAME = '奈良県_01新型コロナウイルス感染者_患者リスト'
 SHEET2_NAME = '奈良県_02新型コロナウイルス感染者_患者集計表'
 
 DEST_FILE   = 'data.json'
-DEST_V3_FILE = 'V3data.json'
+DESTV3_FILE = 'V3data.json'
 
 TAB = ['', '  ', '    ', '      ', '        ', '          ', '            ',
        '              ', '                ', '                    ', '                     ']
@@ -83,7 +83,6 @@ def load_patient_summary( dataUri, sheetName ):
     
     df_summary['県内PCR検査数'] = df_summary['県内PCR検査数'].fillna( '' )
     df_summary['県内PCR検査数_陽性確認'] = df_summary['県内PCR検査数_陽性確認'].fillna( '' )
-    #print(df_summary)
 
     # 日付 : object型→datetime型
     #df_summary['発表日'] = pd.to_datetime(df_summary['発表日'])
@@ -179,7 +178,7 @@ def output_main_summary(f, last_update, summary):
     #f.write(TAB[2] + '"date": "{}",\n'.format(last_update.strftime('%Y/%m/%d %H:%M')))
     f.write(TAB[2] + '"date": "{}",\n'.format(last_update.strftime('%Y/%m/%d')))
     f.write(TAB[2] + '"attr": "検査実施人数",\n')
-    f.write(TAB[4] + '"value": {},\n'.format(last_data['県内PCR検査数']))
+    f.write(TAB[2] + '"value": 0,\n')  # WIP ======================== WIP
     f.write(TAB[2] + '"children": [\n')
     f.write(TAB[3] + '{\n')
     f.write(TAB[4] + '"attr": "感染者数累計",\n')
@@ -230,6 +229,7 @@ def output_sickbeds_summary( f, last_update, summary):
     f.write(TAB[2] + '"total": {\n')
     f.write(TAB[3] + '"総病床数": {},\n'.format(last_data['感染症対応病床数']))
     #f.write(TAB[3] + '"宿泊療養室数": {}\n'.format(last_data['宿泊療養室数']))
+    f.write(TAB[3] + '"宿泊療養室数": {}\n'.format(0))
     f.write(TAB[2] + '},\n')
     f.write(TAB[2] + '"data": {\n')
     f.write(TAB[3] + '"入院患者数": {},\n'.format(last_data['入院者数']))
@@ -253,19 +253,6 @@ def output_data_json(fname, list_last_update, df_list, summary_last_update, df_s
     fileobj.write('}\n')
     fileobj.close()
 
-def output_sickbeds_json(fname, last_update, summary):
-    last_data = summary.iloc[len(summary.index)-1]
-    fileobj = open(fname, 'w', encoding = 'utf_8')
-    fileobj.write('{\n')
-    fileobj.write(TAB[1] + '"data": {\n')
-    fileobj.write(TAB[2] + '"入院患者数": {},\n'.format(last_data['入院者数']))
-    fileobj.write(TAB[2] + '"残り病床数": {}\n'.format(last_data['感染症対応病床数'] - last_data['入院者数']))
-    fileobj.write(TAB[1] + '},\n')
-    #fileobj.write(TAB[1] + '"last_update": "{}"\n'.format(last_update.strftime('%Y/%m/%d %H:%M')))
-    fileobj.write(TAB[1] + '"last_update": "{}"\n'.format(last_update.strftime('%Y/%m/%d')))
-    fileobj.write('}\n')
-    fileobj.close()
-
 def main(args):
     pd.set_option('display.max_columns', 20)
     ## Patient_List
@@ -282,10 +269,9 @@ def main(args):
     summary_last_update, df_summary = load_patient_summary( URL_EXCEL2, args.summary )
     print("    Pateient Summary: ", summary_last_update, len(df_summary.index))
     #print(df_summary.head())
-    
+
     # output data.json
     output_data_json(args.data, list_last_update, df_list, summary_last_update, df_summary)
-    # output_sickbeds_json(args.beds, summary_last_update, df_summary)
     
 if __name__ == '__main__':
     print( "Nara PREFCTURE  Data Convert Srcipt." )
