@@ -11,7 +11,8 @@ TGT_JSON_DIR="../html/api/"
 
 # 奈良県の感染データ
 TJSON_datapref="data.json"  
-TEMP_datapref="./data/data.json"
+#TEMP_datapref="./data/data.json"
+TEMP_datapref="./data/V3data.json"
 TEMP_dataprefSaved=${TEMP_datapref}"_saved"
 # 奈良県のニュース
 TJSON_newspref="news.json"  
@@ -88,8 +89,8 @@ fi
 ####
 # 奈良県感染データ更新：グーグルスプレッドシート参照
 ####
-echo "--  Making data,json from GoogleSpreadSheet"
-cmd="python3 ./convert_naraprefV2.py > /dev/null 2>&1" 
+echo "--  Making data,json from Excel"
+cmd="python3 ./convert_naraprefV3.py > /dev/null 2>&1" 
 echo "    exec: " ${cmd}
 eval ${cmd}
 

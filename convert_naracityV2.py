@@ -11,7 +11,6 @@ sys.path.append(str(Path('__file__').resolve().parent))
 
 # Template, File, Directory
 DATA_DIR = './data'
-
 SRC_SHEETID = "1qR8Xs1oZXS0Qt7nGkWtpTu1wNQtngdxUVo6pBl_QP-U"
 SHEET1_NAME = '01.陽性患者の属性'
 #SHEET2_NAME = '入院患者の状況'
@@ -66,14 +65,14 @@ def load_patient_summary( dataUri, sheetName ):
     last_update = last_data['調査_年月日']
 
     # NaNの置換
-    df_summary['感染者数_累計'] = df_summary['感染者数_累計'].fillna( -1 )
-    df_summary['感染者数_現在'] = df_summary['感染者数_現在'].fillna( -1 )
-    df_summary['入院者数_現在'] = df_summary['入院者数_現在'].fillna( -1 )
-    df_summary['重症者数_現在'] = df_summary['重症者数_現在'].fillna( -1 )
-    df_summary['宿泊療養_現在'] = df_summary['宿泊療養_現在'].fillna( -1 )
-    df_summary['自宅療養_現在'] = df_summary['自宅療養_現在'].fillna( -1 )
-    df_summary['退院者数_累計'] = df_summary['退院者数_累計'].fillna( -1 )
-    df_summary['死亡者数_累計'] = df_summary['死亡者数_累計'].fillna( -1 )
+    df_summary['感染者数_累計'] = df_summary['感染者数_累計'].fillna( '')
+    df_summary['感染者数_現在'] = df_summary['感染者数_現在'].fillna( '')
+    df_summary['入院者数_現在'] = df_summary['入院者数_現在'].fillna( '')
+    df_summary['重症者数_現在'] = df_summary['重症者数_現在'].fillna( '')
+    df_summary['宿泊療養_現在'] = df_summary['宿泊療養_現在'].fillna( '')
+    df_summary['自宅療養_現在'] = df_summary['自宅療養_現在'].fillna( '')
+    df_summary['退院者数_累計'] = df_summary['退院者数_累計'].fillna( '')
+    df_summary['死亡者数_累計'] = df_summary['死亡者数_累計'].fillna( '')
     #print(df_summary)
 
     # 日付 : object型→datetime型
@@ -226,8 +225,45 @@ def output_quarents_summary(f, last_update, summary):
 # 現在（最新）の陽性者状況の出力
 def output_main_summary(f, last_update, summary, patient_total ):
 
-    inspections_total = summary['検査実施_件数'].sum() 
+    inspections_total = summary['検査実施_件数'].sum()
+
+    df=summary[(summary['感染者数_現在']!='')]
+    dflast = df.iloc[len(df.index)-1]
+    patient_now=dflast['感染者数_現在'] 
+
+    df=summary[(summary['入院者数_現在']!='')]
+    dflast = df.iloc[len(df.index)-1]
+    admission_now=dflast['入院者数_現在'] 
+
+    df=summary[(summary['重症者数_現在']!='')]
+    if len(df.index) > 0 :
+        dflast = df.iloc[len(df.index)-1]
+        severity_now=dflast['重症者数_現在']
+    else:
+        severity_now=-1
+        
+    df=summary[(summary['宿泊療養_現在']!='')]
+    if len(df.index) > 0 :
+        dflast = df.iloc[len(df.index)-1]
+        staying_now=dflast['宿泊療養_現在'] 
+    else:
+        staying_now=-1
+
+    df=summary[(summary['自宅療養_現在']!='')]
+    if len(df.index) > 0 :
+        dflast = df.iloc[len(df.index)-1]
+        athome_now=dflast['自宅療養_現在'] 
+    else:
+        athome_now=-1
+
+    df=summary[(summary['退院者数_累計']!='')]
+    dflast = df.iloc[len(df.index)-1]
+    discharge_total=dflast['退院者数_累計']
     
+    df=summary[(summary['死亡者数_累計']!='')]
+    dflast = df.iloc[len(df.index)-1]
+    death_total=dflast['死亡者数_累計'] 
+
     last_data = summary.iloc[len(summary.index)-1]
     f.write(TAB[1] + '"main_summary":{\n')
     #f.write(TAB[2] + '"date": "{}",\n'.format(last_update.strftime('%Y/%m/%d %H:%M')))
@@ -241,35 +277,35 @@ def output_main_summary(f, last_update, summary, patient_total ):
     f.write(TAB[4] + '"children": [\n')
     f.write(TAB[5] + '{\n')
     f.write(TAB[6] + '"attr": "現在感染者数",\n')
-    f.write(TAB[6] + '"value": {},\n'.format(last_data['感染者数_現在']))
+    f.write(TAB[6] + '"value": {},\n'.format( patient_now ))
     f.write(TAB[6] + '"children": [\n')
     f.write(TAB[7] + '{\n')
     f.write(TAB[8] + '"attr": "入院中",\n')
-    f.write(TAB[8] + '"value": {},\n'.format(last_data['入院者数_現在']))
+    f.write(TAB[8] + '"value": {},\n'.format( admission_now))
     f.write(TAB[8] + '"children": [\n')
     f.write(TAB[9] + '{\n')
     f.write(TAB[10] + '"attr": "重症",\n')
-    f.write(TAB[10] + '"value": {}\n'.format(last_data['重症者数_現在']))
+    f.write(TAB[10] + '"value": {}\n'.format( severity_now ))
     f.write(TAB[9] + '}\n')
     f.write(TAB[8] + ']\n')
     f.write(TAB[7] + '},\n')
     f.write(TAB[7] + '{\n')
     f.write(TAB[8] + '"attr": "宿泊療養",\n')
-    f.write(TAB[8] + '"value": {}\n'.format(last_data['宿泊療養_現在']))
+    f.write(TAB[8] + '"value": {}\n'.format( staying_now ))
     f.write(TAB[7] + '},\n')
     f.write(TAB[7] + '{\n')
     f.write(TAB[8] + '"attr": "自宅療養",\n')
-    f.write(TAB[8] + '"value": {}\n'.format(last_data['自宅療養_現在']))
+    f.write(TAB[8] + '"value": {}\n'.format( athome_now ))
     f.write(TAB[7] + '}\n')
     f.write(TAB[6] + ']\n')
     f.write(TAB[5] + '},\n')
     f.write(TAB[5] + '{\n')
     f.write(TAB[6] + '"attr": "退院等累計",\n')
-    f.write(TAB[6] + '"value": {}\n'.format(last_data['退院者数_累計']))
+    f.write(TAB[6] + '"value": {}\n'.format( discharge_total ))
     f.write(TAB[5] + '},\n')
     f.write(TAB[5] + '{\n')
     f.write(TAB[6] + '"attr": "死亡",\n')
-    f.write(TAB[6] + '"value": {}\n'.format(last_data['死亡者数_累計']))
+    f.write(TAB[6] + '"value": {}\n'.format( death_total ))
     f.write(TAB[5] + '}\n')
     f.write(TAB[4] + ']\n')
     f.write(TAB[3] + '}\n')
