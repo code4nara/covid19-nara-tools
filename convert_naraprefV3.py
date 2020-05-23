@@ -81,8 +81,8 @@ def load_patient_summary( dataUri, sheetName ):
     df_summary['宿泊療養者数'] = df_summary['宿泊療養者数'].fillna( 0 )
     df_summary['自宅療養数'] = df_summary['自宅療養数'].fillna( 0 )
     
-    df_summary['県内PCR検査数'] = df_summary['県内PCR検査数'].fillna( '' )
-    df_summary['県内PCR検査数_陽性確認'] = df_summary['県内PCR検査数_陽性確認'].fillna( '' )
+    #df_summary['県内PCR検査数'] = df_summary['県内PCR検査数'].fillna( '' )
+    #df_summary['県内PCR検査数_陽性確認'] = df_summary['県内PCR検査数_陽性確認'].fillna( '' )
 
     # 日付 : object型→datetime型
     #df_summary['発表日'] = pd.to_datetime(df_summary['発表日'])
@@ -171,6 +171,37 @@ def output_patients_summary(f, last_update, summary):
     f.write(TAB[2] + ']\n')
     f.write(TAB[1] + '},\n')
 
+# 検査状況の出力 : 日々データ参照
+def output_inspections_summary(f, last_update, summary):
+    f.write(TAB[1] + '"inspections":{\n')
+    f.write(TAB[2] + '"data": [\n')
+    start = datetime.datetime(2020, 1, 24, 0, 0, 0)
+    end = last_update + datetime.timedelta(days=1)
+    period = (end - start).days
+    stflag = 0
+    for i in range(period):
+        d = start + datetime.timedelta(days=i)
+        idx = list(summary['公表_年月日'][summary['公表_年月日'] == d].index)
+
+        if len(idx) == 1:
+            num = summary['県内PCR検査数'][idx[0]]
+            if num == num : #NaNでないことを判定
+                # 最初でなければ } カンマ付を出力
+                if stflag == 0:
+                    stflag = 1
+                else:
+                    f.write(TAB[3] + '},\n')
+                    
+                f.write(TAB[3] + '{\n')
+                f.write(TAB[4] + '"日付": "{}",\n'.format(str(d.date()) + 'T08:00:00.000Z'))
+                f.write(TAB[4] + '"小計": {}\n'.format(num))
+                last_update=d.date()
+
+    f.write(TAB[3] + '}\n') # 最後の } カンマ無し
+    f.write(TAB[2] + '],\n')
+    f.write(TAB[2] + '"date": "{}"\n'.format(last_update.strftime('%Y/%m/%d')))
+    f.write(TAB[1] + '},\n')
+
 # 現在（最新）の陽性者状況の出力
 def output_main_summary(f, last_update, summary):
     last_data = summary.iloc[len(summary.index)-1]
@@ -245,6 +276,7 @@ def output_data_json(fname, list_last_update, df_list, summary_last_update, df_s
     output_patients_list(fileobj, list_last_update, df_list)
     output_patientslist_summary(fileobj, summary_last_update, df_list)
     #output_patients_summary(fileobj, summary_last_update, df_summary)
+    output_inspections_summary(fileobj, summary_last_update, df_summary)
     output_main_summary(fileobj, summary_last_update, df_summary)
     output_sickbeds_summary(fileobj, summary_last_update, df_summary)
 
