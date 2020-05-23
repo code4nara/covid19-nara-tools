@@ -221,7 +221,7 @@ def output_main_summary(f, last_update, summary):
     f.write(TAB[6] + '"children": [\n')
     f.write(TAB[7] + '{\n')
     f.write(TAB[8] + '"attr": "入院中",\n')
-    f.write(TAB[8] + '"value": {},\n'.format(last_data['入院者数_累計']))
+    f.write(TAB[8] + '"value": {},\n'.format(last_data['入院者数']))
     f.write(TAB[8] + '"children": [\n')
     f.write(TAB[9] + '{\n')
     f.write(TAB[10] + '"attr": "重症",\n')
