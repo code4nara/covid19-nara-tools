@@ -132,7 +132,7 @@ if [ ${UPDATE_FLAG} == 1 ]; then
    # 開発サイトへのデプロイ：要環境変数 GITHUB_TOKEN
    cmd="bash ./githubDeployment.sh -b" 
    echo "    exec: " ${cmd}
-   #eval ${cmd}
+   eval ${cmd}
 
    # 本番サイトへのデプロイ：要環境変数 GITHUB_TOKEN
    cmd="bash ./githubDeployment.sh -b -r master -e production" 
