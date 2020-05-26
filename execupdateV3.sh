@@ -5,6 +5,7 @@
 ####
 # アップデートフラグ：更新あれば１
 UPDATE_FLAG=0
+BATCH_FLAG=0
 
 # 公開用のディレクトリ
 TGT_JSON_DIR="../html/api/"  
@@ -52,11 +53,52 @@ function CheckDiff()
 	rm -f $TEMPFILE1 $TEMPFILE2
     fi
 }
+####
+#   Yes/no check
+####
+YN_CHECK()
+{
+    echo $1
+    while true; do
+        read -p '  [Y/N] ' Answer
+        case $Answer in
+            '' | [Yy]* )
+                break;
+                ;;
+            [Nn]* )
+                echo "  CANCELed."
+                exit;
+                ;;
+            * )
+                echo Please answer YES or NO.
+        esac
+    done
+}
+####
+#   usage_exit
+####
+usage_exit()
+{
+    echo "  JSON Update Scrpit for stopcvoid19.code4nara.org"
+    echo "  usage: ${0}  [-b]"
+    echo "    -b : Batch-Deploy mode"
+    exit;
+}
+
 
 ########
 #       Main
 ########
-echo "  JSON Update Scrpit"
+####
+#   Option Check
+####
+while getopts "hb" OPT
+do
+    case $OPT in
+        h) usage_exit ;;
+        b) BATCH_FLAG=1 ;;
+    esac
+done
 
 ####
 # 奈良県／奈良市のサイトスクレイピング：新着情報の抽出実行
@@ -124,18 +166,35 @@ if [ $ret == "1" ] ; then
 fi
 
 
-# 開発サイトへのデプロイ：要環境変数 GITHUB_TOKEN
+####
+# サイトデプロイ：要環境変数 GITHUB_TOKEN
+####
 if [ ${UPDATE_FLAG} == 1 ]; then
-   echo "II  Exec Github Action for data update."
-   date +"    at %Y/%m/%d %H:%m:%S"
+    echo "II  Exec Github Action for data update."
+    date +"    at %Y/%m/%d %H:%m:%S"
 
-   # 開発サイトへのデプロイ：要環境変数 GITHUB_TOKEN
-   cmd="bash ./githubDeployment.sh -b" 
-   echo "    exec: " ${cmd}
-   eval ${cmd}
+    # バッチモードならば自動実行／バッチモード以外は Y/N チェック
+    if [ ${BATCH_FLAG} == 1 ]; then
+        # 開発サイトへのデプロイ
+	cmd="bash ./githubDeployment.sh -b" 
+	echo "    exec: " ${cmd}
+	eval ${cmd}
+	
+	# 本番サイトへのデプロイ
+	cmd="bash ./githubDeployment.sh -b -r master -e production" 
+	echo "    exec: " ${cmd}
+	eval ${cmd}
+    else
+        # 開発サイトのデプロイ
+	YN_CHECK "  Run Development Deploy to netlify ?" 
+	cmd="bash ./githubDeployment.sh -b" 
+	echo "    exec: " ${cmd}
+	eval ${cmd}
 
-   # 本番サイトへのデプロイ：要環境変数 GITHUB_TOKEN
-   cmd="bash ./githubDeployment.sh -b -r master -e production" 
-   #echo "    exec: " ${cmd}
-   #eval ${cmd}
+	# 本番サイトのデプロイ
+	YN_CHECK "  Run Master Deploy to stopcovid19.code4nara.org ?" 
+	cmd="bash ./githubDeployment.sh -b -r master -e production" 
+	echo "    exec: " ${cmd}
+	eval ${cmd}
+    fi
 fi
