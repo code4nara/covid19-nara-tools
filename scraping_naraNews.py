@@ -26,7 +26,7 @@ NARA_CITY_BASE_URL = 'https://www.city.nara.lg.jp'
 
 # 奈良県のトップページのパース
 def parse_pref_page(page):
-    headerPane = page.find(name='div', attrs={'class': 'inside_b Menu_list'})
+    headerPane = page.find(name='div', attrs={'class': 'LinkList_Standard_em'})
     items = headerPane.select('a[id*="TitleLink"]')
     return items
 
