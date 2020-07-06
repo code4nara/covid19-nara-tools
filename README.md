@@ -66,11 +66,11 @@ bash ./execupdate.sh
 
 スクリプトの実行には、GitHub_token が必要です。
 まず、https://qiita.com/kz800/items/497ec70bff3e555dacd0　などを参考に、workflow をチェックした、Personal access tokens　を作成します。
-次に環境変数 GITHUB_TOKEN を設定します。Bash on CentOS 等であれば、.bashrc に以下ように追加します
+次に環境変数 GITHUB_TOKEN に作成したTOKENを設定します。もし、Bash環境なら、.bashrc に下のように追加します
 
 ```
 # github
-export GITHUB_TOKEN="TOKEN123token123TOKEN123token123aaaaaaa"
+export GITHUB_TOKEN="作成したトークンの文字列"
 ```
 
 source.bashrcなどで反映したあと、以下のスクリプトで実行します。
