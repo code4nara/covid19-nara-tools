@@ -59,8 +59,26 @@ python3 convert_naracity.py  > data_naracity.json
 
 bash ./execupdate.sh
 
-記載時点で奈良市版のみ実行。奈良県内市町村jsonおよびニュースnews.jsonの更新追加予定。
-参照ファイルの更新を判定し、更新されていれば再作成する。
+記載時点で奈良市版のみ実行。奈良県内市町村jsonおよびニュースnews.jsonの更新を追加。参照ファイルの更新を判定し、更新されていれば再作成。
+再作成されれば、deploy_development.sh および deploy_master.sh が実行され、自動デプロイされる。
+
+### GitHub WorkFlowの実行
+
+スクリプトの実行には、GitHub_token が必要です。
+まず、https://qiita.com/kz800/items/497ec70bff3e555dacd0　などを参考に、workflow をチェックした、Personal access tokens　を作成します。
+次に環境変数 GITHUB_TOKEN を設定します。Bash on CentOS 等であれば、.bashrc に以下ように追加します
+
+```
+# github
+export GITHUB_TOKEN="TOKEN123token123TOKEN123token123aaaaaaa"
+```
+
+source.bashrcなどで反映したあと、以下のスクリプトで実行します。
+
+* deploy_development.sh : developmentブランチを netlifyテスト環境にデプロイ
+* deploy_master.sh ： masterブランチを、本番環境にデプロイ。本番環境からはcronによるgit pullで更新
+
+
 
 ## ファイル
 
