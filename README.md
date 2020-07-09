@@ -79,7 +79,7 @@ bash ./execupdateV3.sh
 
 スクリプトの実行には、GITHUB_TOKEN が必要です。
 まず、https://qiita.com/kz800/items/497ec70bff3e555dacd0
-などを参考に、workflow をチェックした、Personal access tokens　を作成します。
+などを参考に、**Select scopesの workflow にチェック** をつけて、Personal access tokens　を作成。
 次に環境変数 GITHUB_TOKEN に作成したTOKENを設定します。もし、Bash環境なら、.bashrc に下のように追加します。
 
 ```
