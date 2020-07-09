@@ -4,6 +4,7 @@
 
 ## 準備
 
+### ソースのコピー
 ```bash
 git clone https://github.com/code4nara/covid19-nara-tools.git
 cd covid19-nara-tools
@@ -13,6 +14,8 @@ pip install -U pip
 pip install -r requirements.txt
 ```
 
+### 動作環境構築
+
 for CentOS8
 ```
 sudo yum install python3
@@ -20,6 +23,14 @@ sudo yum install python3-pip
 sudo pip3 install -r requirements.txt
 sudo yum install epel-release
 sudo yum install jq
+```
+
+for ubuntu (on windows)
+```
+sudo apt install python3
+sudo apt install python3-pip
+sudo pip3 install -r requirements.txt
+sudo apt install jq
 ```
 
 jq は出力を見やすく整形するときに利用
@@ -57,35 +68,35 @@ python3 convert_naracity.py  > data_naracity.json
 
 ### バッチ実行スクリプト
 
-bash ./execupdate.sh
+bash ./execupdateV3.sh
 
-記載時点で奈良市版のみ実行。奈良県内市町村jsonおよびニュースnews.jsonの更新を追加。参照ファイルの更新を判定し、更新されていれば再作成。
-再作成されれば、deploy_development.sh および deploy_master.sh が実行され、自動デプロイされる。
+奈良県のオープンデータを直接読み込み、奈良県内市町村jsonおよびニュースnews.jsonを更新。
+それぞれ参照ファイルからjsonを作成し、保存している前回の結果と比較し、更新の有無を判断。
+更新されたjsonはスクリプト内に記述されたディレクトリにコピー
+最後に、deploy_development.sh および deploy_master.sh で、Github Actionを実行。
 
-### GitHub WorkFlowの実行
+### GitHub Action(WorkFlow)の実行
 
-スクリプトの実行には、GitHub_token が必要です。
+スクリプトの実行には、GITHUB_TOKEN が必要です。
 まず、https://qiita.com/kz800/items/497ec70bff3e555dacd0　などを参考に、workflow をチェックした、Personal access tokens　を作成します。
-次に環境変数 GITHUB_TOKEN に作成したTOKENを設定します。もし、Bash環境なら、.bashrc に下のように追加します
+次に環境変数 GITHUB_TOKEN に作成したTOKENを設定します。もし、Bash環境なら、.bashrc に下のように追加します。
 
 ```
 # github
 export GITHUB_TOKEN="作成したトークンの文字列"
 ```
 
-source.bashrcなどで反映したあと、以下のスクリプトで実行します。
+反映後、source.bashrc などで設定を反映したあとスクリプトを実行します。
 
 * deploy_development.sh : developmentブランチを netlifyテスト環境にデプロイ
 * deploy_master.sh ： masterブランチを、本番環境にデプロイ。本番環境からはcronによるgit pullで更新
-
 
 
 ## ファイル
 
 dataディレクトリにxlsxファイルを配置します。
 
-- 奈良県内市町村リンク： municipalities.xlsx
-- 奈良県全体要：準備中
+- 奈良県全体：指定URLから直接読み込む
 - 奈良市用： opendata_covid19_NaraCity.xlsx
 
 テスト実行は、sample以下にあるexcelのサンプルが使えます。
