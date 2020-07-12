@@ -29,7 +29,6 @@ SHEET1_NAME = '奈良県_01新型コロナウイルス感染者_患者リスト'
 SHEET2_NAME = '奈良県_02新型コロナウイルス感染者_患者集計表'
 
 DEST_FILE   = 'data.json'
-DESTV3_FILE = 'V3data.json'
 
 TAB = ['', '  ', '    ', '      ', '        ', '          ', '            ',
        '              ', '                ', '                    ', '                     ']
@@ -118,7 +117,7 @@ def output_patients_list(f, last_update, patients):
     f.write(TAB[2] + ']\n')
     f.write(TAB[1] + '},\n')
 
-# 陽性者発生状況の出力 : 陽性者リストから日々の発生数を計算
+# 陽性者発生状況の出力 : 患者リストから日々の発生数を計算
 def output_patientslist_summary(f, last_update, patients):
     start = datetime.datetime(2020, 1, 24, 0, 0, 0)
     end = last_update + datetime.timedelta(days=1)
@@ -145,7 +144,7 @@ def output_patientslist_summary(f, last_update, patients):
     f.write(TAB[2] + ']\n')
     f.write(TAB[1] + '},\n')
 
-# 陽性者発生状況の出力 : 日々データに養成数がある場合はこちら
+# 陽性者発生状況の出力 : 日々データに陽性数がある場合はこちら
 def output_patients_summary(f, last_update, summary):
     f.write(TAB[1] + '"patients_summary":{\n')
     #f.write(TAB[2] + '"date": "{}",\n'.format(last_update.strftime('%Y/%m/%d %H:%M')))
@@ -159,8 +158,11 @@ def output_patients_summary(f, last_update, summary):
         idx = list(summary['公表_年月日'][summary['公表_年月日'] == d].index)
         if len(idx) == 1:
             num = summary['陽性確認_件数'][idx[0]]
+            if num != num : # NaN（未入力）の場合は強制的に０に
+                num = 0
         else:
             num = 0
+            
         f.write(TAB[3] + '{\n')
         f.write(TAB[4] + '"日付": "{}",\n'.format(str(d.date()) + 'T08:00:00.000Z'))
         f.write(TAB[4] + '"小計": {}\n'.format(num))
@@ -185,7 +187,7 @@ def output_inspections_summary(f, last_update, summary):
 
         if len(idx) == 1:
             num = summary['県内PCR検査数'][idx[0]]
-            if num == num : #NaNでないことを判定
+            if num == num : #NaN（未入力）でない場合
                 # 最初でなければ } カンマ付を出力
                 if stflag == 0:
                     stflag = 1
@@ -202,6 +204,41 @@ def output_inspections_summary(f, last_update, summary):
     f.write(TAB[2] + '"date": "{}"\n'.format(last_update.strftime('%Y/%m/%d')))
     f.write(TAB[1] + '},\n')
 
+# 陽性率の出力 : 日々データ参照
+def output_inspection_persons_summary(f, last_update, summary):
+    f.write(TAB[1] + '"inspection_persons_summary":{\n')
+    f.write(TAB[2] + '"data": [\n')
+    start = datetime.datetime(2020, 1, 24, 0, 0, 0)
+    end = last_update + datetime.timedelta(days=1)
+    period = (end - start).days
+    stflag = 0
+    for i in range(period):
+        d = start + datetime.timedelta(days=i)
+        idx = list(summary['公表_年月日'][summary['公表_年月日'] == d].index)
+
+        if len(idx) == 1:
+            num1 = summary['県内PCR検査数'][idx[0]]
+            num2 = summary['県内PCR検査数_陽性確認'][idx[0]]
+            num3 = summary['陽性率（7日間移動平均）'][idx[0]]
+            if num1 == num1 and num2 == num2 or num3 == num3 : # NaNでない場合
+                # 最初でなければ } カンマ付を出力
+                if stflag == 0:
+                    stflag = 1
+                else:
+                    f.write(TAB[3] + '},\n')
+                    
+                f.write(TAB[3] + '{\n')
+                f.write(TAB[4] + '"日付": "{}",\n'.format(str(d.date()) + 'T08:00:00.000Z'))
+                f.write(TAB[4] + '"検査人数": {},\n'.format(num1))
+                f.write(TAB[4] + '"陽性者数": {},\n'.format(num2))
+                f.write(TAB[4] + '"陽性率": {}\n'.format(num3))
+                last_update=d.date()
+
+    f.write(TAB[3] + '}\n') # 最後の } カンマ無し
+    f.write(TAB[2] + '],\n')
+    f.write(TAB[2] + '"date": "{}"\n'.format(last_update.strftime('%Y/%m/%d')))
+    f.write(TAB[1] + '},\n')
+    
 # 現在（最新）の陽性者状況の出力
 def output_main_summary(f, last_update, summary):
     last_data = summary.iloc[len(summary.index)-1]
@@ -272,32 +309,39 @@ def output_sickbeds_summary( f, last_update, summary):
 def output_data_json(fname, list_last_update, df_list, summary_last_update, df_summary):
     fileobj = open(fname, 'w', encoding = 'utf_8')
     fileobj.write('{\n')
-    # 表示用データ(
+    
+    # 陽性者リスト
     output_patients_list(fileobj, list_last_update, df_list)
-    output_patientslist_summary(fileobj, summary_last_update, df_list)
-    #output_patients_summary(fileobj, summary_last_update, df_summary)
+    # 日々の陽性者数
+    #output_patientslist_summary(fileobj, summary_last_update, df_list)
+    output_patients_summary(fileobj, summary_last_update, df_summary)
+    # 日々の検査数
     output_inspections_summary(fileobj, summary_last_update, df_summary)
+    # ７日間平均陽性率
+    output_inspection_persons_summary(fileobj, summary_last_update, df_summary)
+    # 最新の集計
     output_main_summary(fileobj, summary_last_update, df_summary)
+    # ベッド数と入院数
     output_sickbeds_summary(fileobj, summary_last_update, df_summary)
 
+    # 全体の更新日付
     fileobj.write(TAB[1] + '"lastUpdate": "{}"\n'.format( datetime.datetime.now().strftime('%Y/%m/%d %H:%M')))
 
     fileobj.write('}\n')
     fileobj.close()
 
 def main(args):
+    # メイン関数
+
+    ## Pandas DataFlame のprint時の表示カラム数設定
     pd.set_option('display.max_columns', 20)
-    ## Patient_List
-    #datauri = "https://docs.google.com/spreadsheets/d/{0}/export?format=xlsx&id={0}".format( args.gid  )
-    #list_last_update, df_list = load_patient_list( datauri, args.list )
+    
+    ## 陽性者リストの作成
     list_last_update, df_list = load_patient_list( URL_EXCEL1, args.list )
     print("    Pateient List   : ", list_last_update, len(df_list.index))
     #print( df_list.head())
-    #print( df_list )
     
     ## Daily Summary
-    #datauri = "https://docs.google.com/spreadsheets/d/{0}/export?format=xlsx&id={0}".format( args.gid )
-    #summary_last_update, df_summary = load_patient_summary( datauri, args.summary )
     summary_last_update, df_summary = load_patient_summary( URL_EXCEL2, args.summary )
     print("    Pateient Summary: ", summary_last_update, len(df_summary.index))
     #print(df_summary.head())
@@ -307,6 +351,8 @@ def main(args):
     
 if __name__ == '__main__':
     print( "Nara PREFCTURE  Data Convert Srcipt." )
+
+    # 引数処理
     parser = argparse.ArgumentParser()
     #help_ = 'Google Spreadsheet Id'
     #parser.add_argument('-i', '--gid', help=help_, default=SRC_SHEETID )
@@ -315,8 +361,11 @@ if __name__ == '__main__':
     help_ = 'Patient Summary Sheet'
     parser.add_argument('-s', '--summary', help=help_, default=SHEET2_NAME )
     help_ = 'Data file'
-    parser.add_argument('-d', '--data', help=help_, default=os.path.join(DATA_DIR, DESTV3_FILE))
+    parser.add_argument('-d', '--data', help=help_, default=os.path.join(DATA_DIR, DEST_FILE))
     args = parser.parse_args()
+
+    # メイン関数
     main( args )
+    
     print( "Finished." )
 
