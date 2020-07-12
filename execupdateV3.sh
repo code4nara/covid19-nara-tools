@@ -12,8 +12,7 @@ TGT_JSON_DIR="../html/api/"
 
 # 奈良県の感染データ
 TJSON_datapref="data.json"  
-#TEMP_datapref="./data/data.json"
-TEMP_datapref="./data/V3data.json"
+TEMP_datapref="./data/data.json"
 TEMP_dataprefSaved=${TEMP_datapref}"_saved"
 # 奈良県のニュース
 TJSON_newspref="news.json"  
@@ -129,9 +128,9 @@ fi
 #fi
 
 ####
-# 奈良県感染データ更新：グーグルスプレッドシート参照
+# 奈良県感染データ更新
 ####
-echo "--  Making data,json from Excel"
+echo "--  Making data.json from Excel"
 cmd="python3 ./convert_naraprefV3.py > /dev/null 2>&1" 
 echo "    exec: " ${cmd}
 eval ${cmd}
@@ -150,20 +149,20 @@ fi
 ####
 # 奈良市感染データ更新：グーグルスプレッドシート参照
 ####
-echo "--  Making naracity.json from GoogleSpreadSheet"
-cmd="python3 ./convert_naracityV2.py > /dev/null 2>&1"
-echo "    exec: " ${cmd}
-eval ${cmd}
+#echo "--  Making naracity.json from GoogleSpreadSheet"
+#cmd="python3 ./convert_naracityV2.py > /dev/null 2>&1"
+#echo "    exec: " ${cmd}
+#eval ${cmd}
 
-# 保存データと比較し変更があれば公開場所にコピー
-ret=`CheckDiff ${TEMP_datacity}  ${TEMP_datacitySaved}`
-if [ $ret == "1" ] ; then
-    echo "II  ${TJSON_datacity} Found updete : Nara City Data"
-    UPDATE_FLAG=1
-    # コピーを保存し公開フォルダにコピー
-    cp ${TEMP_datacity} ${TEMP_datacitySaved}
-    cp ${TEMP_datacity} ${TGT_JSON_DIR}${TJSON_datacity}
-fi
+## 保存データと比較し変更があれば公開場所にコピー
+#ret=`CheckDiff ${TEMP_datacity}  ${TEMP_datacitySaved}`
+#if [ $ret == "1" ] ; then
+#    echo "II  ${TJSON_datacity} Found updete : Nara City Data"
+#    UPDATE_FLAG=1
+#    # コピーを保存し公開フォルダにコピー
+#    cp ${TEMP_datacity} ${TEMP_datacitySaved}
+#    cp ${TEMP_datacity} ${TGT_JSON_DIR}${TJSON_datacity}
+#fi
 
 
 ####
