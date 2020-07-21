@@ -36,7 +36,12 @@ def parse_pref_page(page):
 
 # 奈良県のニュースのパース
 def parse_pref_item(item):
-    date = item[0]
+    sep_keys = ['年', '月', '日']
+    str = item[0]
+    for key in sep_keys:
+        str = str.replace(key, ',')
+    elem = str.split(',')
+    date = '{}/{}/{}'.format(elem[0], elem[1], elem[2])
     # タイトル 
     text = item[1].text
     # 相対 → 絶対
