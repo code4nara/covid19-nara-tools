@@ -26,23 +26,26 @@ NARA_CITY_BASE_URL = 'https://www.city.nara.lg.jp'
 
 # 奈良県のトップページのパース
 def parse_pref_page(page):
-    headerPane = page.find(name='div', attrs={'class': 'LinkList_Standard_em'})
-    items = headerPane.select('a[id*="TitleLink"]')
+    headerPane = page.find(name='div', attrs={'class': 'NewsList_Standard_em'})
+    items = []
+    for li in headerPane.find_all('li'):
+        dt = li.find(name='span', attrs={'class': 'CreatedDate'}).text
+        title = li.find(name='a', attrs={'class': 'TitleLink'})
+        items.append((dt, title))
     return items
 
 # 奈良県のニュースのパース
 def parse_pref_item(item):
-    # 令和 → 西暦
-    sep_keys = ['令和', '年', '月', '日）']
-    str = item.string
+    sep_keys = ['年', '月', '日']
+    str = item[0]
     for key in sep_keys:
         str = str.replace(key, ',')
     elem = str.split(',')
-    date = '20{}/{}/{}'.format(int(elem[1]) + 18, elem[2], elem[3])
+    date = '{}/{}/{}'.format(elem[0], elem[1], elem[2])
     # タイトル 
-    text = elem[4]
+    text = item[1].text
     # 相対 → 絶対
-    str = item.attrs['href']
+    str = item[1].attrs['href']
     str = str.replace('#module', ',')
     elem = str.split(',')
     if elem[0].startswith('http'):
