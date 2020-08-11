@@ -28,7 +28,8 @@ def main(args):
         print(url)
         data[code].href = url[0]
     # json
-    data.to_json(args.output)
+    data.to_json(args.output, force_ascii=False)
+    
                   
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
