@@ -174,26 +174,37 @@ if [ ${UPDATE_FLAG} == 1 ]; then
 
     # バッチモードならば自動実行／バッチモード以外は Y/N チェック
     if [ ${BATCH_FLAG} == 1 ]; then
-        # 開発サイトへのデプロイ
-	cmd="bash ./githubDeployment.sh -b" 
+        ## 開発サイトへのデプロイ
+	#cmd="bash ./githubDeployment.sh -b" 
+	#echo "    exec: " ${cmd}
+	#eval ${cmd}
+	
+	# テストサイトへのデプロイ
+	cmd="bash ./githubDeployment.sh -b -r staging -e gh-pages" 
 	echo "    exec: " ${cmd}
 	eval ${cmd}
-	
+
 	# 本番サイトへのデプロイ
 	cmd="bash ./githubDeployment.sh -b -r master -e production" 
 	echo "    exec: " ${cmd}
 	eval ${cmd}
     else
         # 開発サイトのデプロイ
-	YN_CHECK "  Run Development Deploy to netlify ?" 
 	cmd="bash ./githubDeployment.sh -b" 
-	echo "    exec: " ${cmd}
+	echo "    exec CMD: " ${cmd}
+	YN_CHECK "QQ  Run Development Deploy to netlify ?" 
+	#eval ${cmd}
+
+	# テストサイトへのデプロイ
+	cmd="bash ./githubDeployment.sh -b -r staging -e gh-pages" 
+	echo "    exec CMD: " ${cmd}
+	YN_CHECK "QQ  Run Staging Deploy to covid19-staging ?" 
 	eval ${cmd}
 
 	# 本番サイトのデプロイ
-	YN_CHECK "  Run Master Deploy to stopcovid19.code4nara.org ?" 
 	cmd="bash ./githubDeployment.sh -b -r master -e production" 
-	echo "    exec: " ${cmd}
+	echo "    exec CMD: " ${cmd}
+	YN_CHECK "QQ  Run Master Deploy to stopcovid19.code4nara.org ?" 
 	eval ${cmd}
     fi
 fi
