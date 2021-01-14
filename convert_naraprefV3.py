@@ -246,6 +246,7 @@ def output_main_summary(f, last_update, summary):
     #f.write(TAB[2] + '"date": "{}",\n'.format(last_update.strftime('%Y/%m/%d %H:%M')))
     f.write(TAB[2] + '"date": "{}",\n'.format(last_update.strftime('%Y/%m/%d')))
     f.write(TAB[2] + '"attr": "検査実施人数",\n')
+    # 項目が無いので０とする
     f.write(TAB[2] + '"value": 0,\n')  # WIP ======================== WIP
     f.write(TAB[2] + '"children": [\n')
     f.write(TAB[3] + '{\n')
@@ -258,7 +259,9 @@ def output_main_summary(f, last_update, summary):
     f.write(TAB[6] + '"children": [\n')
     f.write(TAB[7] + '{\n')
     f.write(TAB[8] + '"attr": "入院中",\n')
-    f.write(TAB[8] + '"value": {},\n'.format(last_data['入院者数']))
+    # 2021/1/12のデータ形式変更により項目がなくなったので０に
+    #    f.write(TAB[8] + '"value": {},\n'.format(last_data['入院者数']))
+    f.write(TAB[8] + '"value": 0,\n')  # WIP ======================== WIP
     f.write(TAB[8] + '"children": [\n')
     f.write(TAB[9] + '{\n')
     f.write(TAB[10] + '"attr": "重症",\n')
@@ -267,12 +270,24 @@ def output_main_summary(f, last_update, summary):
     f.write(TAB[8] + ']\n')
     f.write(TAB[7] + '},\n')
     f.write(TAB[7] + '{\n')
-    f.write(TAB[8] + '"attr": "宿泊療養",\n')
-    f.write(TAB[8] + '"value": {}\n'.format(last_data['宿泊療養者数']))
+    f.write(TAB[8] + '"attr": "入院・療養中数",\n')
+    f.write(TAB[8] + '"value": {}\n'.format(last_data['入院・療養中数']))
     f.write(TAB[7] + '},\n')
     f.write(TAB[7] + '{\n')
+    f.write(TAB[8] + '"attr": "入院・入所準備中数",\n')
+    f.write(TAB[8] + '"value": {}\n'.format(last_data['入院・入所準備中数']))
+    f.write(TAB[7] + '},\n')
+    # 2021/1/12のデータ形式変更により項目無しなので宿泊療養は０とする
+    f.write(TAB[7] + '{\n')
+    f.write(TAB[8] + '"attr": "宿泊療養",\n')
+#    f.write(TAB[8] + '"value": {}\n'.format(last_data['宿泊療養者数']))
+    f.write(TAB[8] + '"value": 0\n')  # WIP ======================== WIP
+    f.write(TAB[7] + '},\n')
+    # 2021/1/12のデータ形式変更により項目無しなので自宅療養は０とする
+    f.write(TAB[7] + '{\n')
     f.write(TAB[8] + '"attr": "自宅療養",\n')
-    f.write(TAB[8] + '"value": {}\n'.format(last_data['自宅療養数']))
+#    f.write(TAB[8] + '"value": {}\n'.format(last_data['自宅療養数']))
+    f.write(TAB[8] + '"value": 0\n')  # WIP ======================== WIP
     f.write(TAB[7] + '}\n')
     f.write(TAB[6] + ']\n')
     f.write(TAB[5] + '},\n')
@@ -289,6 +304,22 @@ def output_main_summary(f, last_update, summary):
     f.write(TAB[2] + ']\n')
     f.write(TAB[1] + '},\n')
 
+def output_patientsstat_summary(  f, last_update, summary):
+    last_data = summary.iloc[len(summary.index)-1]
+    f.write(TAB[1] + '"patientstat_summary":{\n')
+    #f.write(TAB[2] + '"date": "{}",\n'.format(last_update.strftime('%Y/%m/%d %H:%M')))
+    f.write(TAB[2] + '"date": "{}",\n'.format(last_update.strftime('%Y/%m/%d')))
+    f.write(TAB[2] + '"total": {\n')
+    f.write(TAB[3] + '"総病床数": {},\n'.format(last_data['感染症対応病床数']))
+    f.write(TAB[3] + '"宿泊療養室数": {}\n'.format(last_data['宿泊療養室数']))
+    f.write(TAB[2] + '},\n')
+    f.write(TAB[2] + '"data": {\n')
+    f.write(TAB[3] + '"入院・療養中数": {},\n'.format(last_data['入院・療養中数']))
+    f.write(TAB[3] + '"残り病床数": {},\n'.format( last_data['感染症対応病床数']+last_data['宿泊療養室数']-last_data['入院・療養中数']))     
+    f.write(TAB[3] + '"入院・入所準備中数": {}\n'.format(last_data['入院・入所準備中数']))
+    f.write(TAB[2] + '}\n')
+    f.write(TAB[1] + '},\n')
+
 def output_sickbeds_summary( f, last_update, summary):
     last_data = summary.iloc[len(summary.index)-1]
     f.write(TAB[1] + '"sickbeds_summary":{\n')
@@ -300,8 +331,11 @@ def output_sickbeds_summary( f, last_update, summary):
     f.write(TAB[3] + '"宿泊療養室数": {}\n'.format(0))
     f.write(TAB[2] + '},\n')
     f.write(TAB[2] + '"data": {\n')
-    f.write(TAB[3] + '"入院患者数": {},\n'.format(last_data['入院者数']))
-    f.write(TAB[3] + '"残り病床数": {}\n'.format( last_data['感染症対応病床数']-last_data['入院者数'] ))
+    # 2021/1/12のデータ形式変更により項目がなくなったので０に
+    #f.write(TAB[3] + '"入院患者数": {},\n'.format(last_data['入院者数']))
+    #f.write(TAB[3] + '"残り病床数": {}\n'.format( last_data['感染症対応病床数']-last_data['入院者数'] ))
+    f.write(TAB[3] + '"入院患者数": 0,\n')
+    f.write(TAB[3] + '"残り病床数": 0\n')
     f.write(TAB[2] + '}\n')
     f.write(TAB[1] + '},\n')
 
@@ -323,7 +357,9 @@ def output_data_json(fname, list_last_update, df_list, summary_last_update, df_s
     output_main_summary(fileobj, summary_last_update, df_summary)
     # ベッド数と入院数
     output_sickbeds_summary(fileobj, summary_last_update, df_summary)
-
+    # 陽性者総数（入院＋療養中）と病床数＋宿泊療養室数
+    output_patientsstat_summary(fileobj, summary_last_update, df_summary)
+        
     # 全体の更新日付
     fileobj.write(TAB[1] + '"lastUpdate": "{}"\n'.format( datetime.datetime.now().strftime('%Y/%m/%d %H:%M')))
 
