@@ -180,9 +180,9 @@ if [ ${UPDATE_FLAG} == 1 ]; then
 	#eval ${cmd}
 	
 	# テストサイトへのデプロイ
-	cmd="bash ./githubDeployment.sh -b -r staging -e gh-pages" 
-	echo "    exec: " ${cmd}
-	eval ${cmd}
+	#cmd="bash ./githubDeployment.sh -b -r staging -e gh-pages"
+	#echo "    exec: " ${cmd}
+	#eval ${cmd}
 
 	# 本番サイトへのデプロイ
 	cmd="bash ./githubDeployment.sh -b -r master -e production" 
