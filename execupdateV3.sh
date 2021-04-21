@@ -142,7 +142,7 @@ if [ $ret == "1" ] ; then
     UPDATE_FLAG=1
     # コピーを保存し公開フォルダにコピー
     cp ${TEMP_datapref} ${TEMP_dataprefSaved}
-    cp ${TEMP_datapref} ${TGT_JSON_DIR}${TJSON_datapref}
+    jq -c . ${TEMP_datapref} > ${TGT_JSON_DIR}${TJSON_datapref}
 fi
 
 
