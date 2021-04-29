@@ -276,7 +276,7 @@ def output_main_summary(f, last_update, summary):
     f.write(TAB[7] + '},\n')
     f.write(TAB[7] + '{\n')
     f.write(TAB[8] + '"attr": "入院・入所準備中数",\n')
-    f.write(TAB[8] + '"入院・入所準備中数": {},\n'.format(last_data['入院・入所待機中、自宅療養中']))
+    f.write(TAB[8] + '"入院・入所準備中数": {}\n'.format(last_data['入院・入所待機中、自宅療養中']))
     f.write(TAB[7] + '},\n')
     # 2021/1/12のデータ形式変更により項目無しなので宿泊療養は０とする
     f.write(TAB[7] + '{\n')
@@ -315,10 +315,11 @@ def output_patientsstat_summary(  f, last_update, summary):
     f.write(TAB[3] + '"宿泊療養室数": {}\n'.format(last_data['宿泊療養室数']))
     f.write(TAB[2] + '},\n')
     f.write(TAB[2] + '"data": {\n')
-    f.write(TAB[3] + '"入院・療養中数": {},\n'.format(last_data['入院・療養中数']))
+    #f.write(TAB[3] + '"入院・療養中数": {},\n'.format(last_data['入院・療養中数']))
+    f.write(TAB[3] + '"入院・療養中数": {},\n'.format(last_data['現在感染者数']-last_data['入院・入所待機中、自宅療養中']))
     #f.write(TAB[3] + '"入院・入所準備中数": {},\n'.format(last_data['入院・入所準備中数']))
     #f.write(TAB[3] + '"残り病床数": {}\n'.format( last_data['感染症対応病床数']+last_data['宿泊療養室数']-last_data['入院・療養中数']))
-    f.write(TAB[3] + '"入院・入所準備中数": {},\n'.format(last_data['入院・入所待機中、自宅療養中']))
+    f.write(TAB[3] + '"入院・入所準備中数": {}\n'.format(last_data['入院・入所待機中、自宅療養中']))
     f.write(TAB[2] + '}\n')
     f.write(TAB[1] + '},\n')
 
