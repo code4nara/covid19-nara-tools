@@ -316,7 +316,7 @@ def output_patientsstat_summary(  f, last_update, summary):
     f.write(TAB[2] + '"data": {\n')
     f.write(TAB[3] + '"重症者数": {},\n'.format(last_data['重症']))
     f.write(TAB[3] + '"入院・療養中数": {},\n'.format(last_data['入院・療養中数']-last_data['重症']))
-    f.write(TAB[3] + '"入院入所準備中数": {}\n'.format(last_data['入院・入所待機中、自宅療養中']))
+    f.write(TAB[3] + '"入院・入所待機中数、自宅療養中数": {}\n'.format(last_data['入院・入所待機中、自宅療養中']))
     f.write(TAB[2] + '}\n')
     f.write(TAB[1] + '},\n')
 
