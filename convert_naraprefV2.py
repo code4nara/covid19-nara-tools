@@ -85,6 +85,8 @@ def output_patients_list(f, last_update, patients):
     f.write(TAB[1] + '"patients":{\n')
     f.write(TAB[2] + '"date": "{}",\n'.format(last_update.strftime('%Y/%m/%d')))
     f.write(TAB[2] + '"data": [\n')
+    '''
+    # データ肥大化のための暫定対策
     for i in range(len(patients.index)):
         patient = patients.iloc[i]
         f.write(TAB[3] + '{\n')
@@ -102,6 +104,7 @@ def output_patients_list(f, last_update, patients):
             f.write(TAB[3] + '}\n')
         else:
             f.write(TAB[3] + '},\n')
+    '''
     f.write(TAB[2] + ']\n')
     f.write(TAB[1] + '},\n')
 
