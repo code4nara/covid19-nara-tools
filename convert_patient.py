@@ -47,6 +47,7 @@ def load_patient_summary(fname):
     df_summary = df_summary.drop(1)
     df_summary = df_summary.drop(['全国地方公共団体コード', '都道府県名', '備考'], axis=1)
     # 日付 : object型→datetime型
+    df_summary['公表_年月日'].replace(to_replace=r'(\d{4}).?(\d{2}).?(\d{2})', value=r"\1-\2-\3", regex=True, inplace=True)
     df_summary['公表_年月日'] = pd.to_datetime(df_summary['公表_年月日'])
     # NaNの置換
     df_summary[['陽性確認_件数', '陽性確認_件数_累計', '入院者数_累計', '入院者数', '入院者中の患者数', '入院者中の無症状病原体保有者数', '死亡者_累計', '退院者_累計', '感染症対応病床数']] = df_summary[['陽性確認_件数', '陽性確認_件数_累計', '入院者数_累計', '入院者数', '入院者中の患者数', '入院者中の無症状病原体保有者数', '死亡者_累計', '退院者_累計', '感染症対応病床数']].fillna(0)
